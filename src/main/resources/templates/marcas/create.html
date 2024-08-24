@@ -1,0 +1,36 @@
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<div layout:fragment="content">
+    <h1>Crear nuevo producto</h1>
+    <form th:action="@{/marcas/save}" th:object="${marca}" method="post">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input type="text" class="form-control" th:field="*{nombre}" id="nombre" placeholder="Escriba el nombre del producto" required>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <input type="text" class="form-control" th:field="*{descripcion}" id="descripcion" placeholder="Escriba la descripción del producto" required>
+                </div>
+            </div>
+        </div>
+        
+
+        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
+            <ul>
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+        </div>
+        
+        <hr>
+        <button type="submit" class="btn btn-primary">Guardar</button> |
+        <a th:href="@{/productos}" class="btn btn-secondary">Regresar</a>
+    </form>
+</div>
+</html>
