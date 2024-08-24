@@ -1,9 +1,9 @@
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
 <div layout:fragment="content">
 
-
     <h1>Crear nuevo producto</h1>
-    <form th:action="@{/marcas/save}" th:object="${marca}" method="post">
+    <form th:action="@{/productos/save}" th:object="${producto}" method="post">
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -11,7 +11,15 @@
                     <input type="text" class="form-control" th:field="*{nombre}" id="nombre" placeholder="Escriba el nombre del producto" required>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="precio">Precio</label>
+                    <input type="number" step="0.01" class="form-control" th:field="*{precio}" id="precio" placeholder="Escriba el precio del producto" required>
+                </div>
+            </div>
         </div>
+
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
@@ -19,8 +27,16 @@
                     <input type="text" class="form-control" th:field="*{descripcion}" id="descripcion" placeholder="Escriba la descripción del producto" required>
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="marca">Marca</label>
+                    <select class="form-control" th:field="*{marca.id}" id="marca" required>
+                        <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
+                    </select>
+                </div>
+            </div>
         </div>
-        
 
         <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
             <ul>

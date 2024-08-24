@@ -4,26 +4,29 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
 
-import java.util.List;
-
-
 @Entity
-@Table(name = "marcas")
-public class Marca {
- @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  
+public class Producto {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotNull(message = "El nombre de la marca es obligatorio")
 
+    @NotNull(message = "El nombre de la Nombre es obligatorio")
     private String nombre;
+
+    @NotNull(message = "El nombre de la Precio es obligatorio")
+
+    private Double precio; 
 
     @NotNull(message = "El nombre de la descripcion es obligatorio")
 
     private String descripcion;
 
-    @OneToMany(mappedBy = "marca", cascade = CascadeType.ALL)
-    private List<Producto> productos; 
+    @NotNull(message = "El nombre de la Marca es obligatorio")
+
+    @ManyToOne
+    @JoinColumn(name = "marca_id")
+    private Marca marca;
 
     public Long getId() {
         return id;
@@ -41,6 +44,14 @@ public class Marca {
         this.nombre = nombre;
     }
 
+    public Double getPrecio() {
+        return precio;
+    }
+
+    public void setPrecio(Double precio) {
+        this.precio = precio;
+    }
+
     public String getDescripcion() {
         return descripcion;
     }
@@ -48,4 +59,13 @@ public class Marca {
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
     }
+
+    public Marca getMarca() {
+        return marca;
+    }
+
+    public void setMarca(Marca marca) {
+        this.marca = marca;
+    }
+
 }

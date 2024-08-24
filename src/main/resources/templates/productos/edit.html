@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+  xmlns:th="http://www.thymeleaf.org"
+  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="layouts/_layout">
+
+<div layout:fragment="content">
+  <h1>Editar Producto</h1>
+
+  <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+  <div th:if="${msg}" class="alert alert-success" role="alert" th:text="${msg}"></div>
+
+  <form th:action="@{/productos/update}" th:object="${producto}" method="post">
+    <input type="hidden" th:field="*{id}" />
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input type="text" class="form-control" th:field="*{nombre}" id="nombre" placeholder="Escriba el nombre del producto" required>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="precio">Precio</label>
+          <input type="number" step="0.01" class="form-control" th:field="*{precio}" id="precio" placeholder="Escriba el precio del producto" required>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="descripcion">Descripción</label>
+          <textarea class="form-control" th:field="*{descripcion}" id="descripcion" cols="12" rows="3" required></textarea>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="form-group">
+          <label for="marca">Marca</label>
+          <select class="form-control" th:field="*{marca.id}" id="marca" required>
+            <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <hr>
+    <button type="submit" class="btn btn-primary">Guardar</button> |
+    <a th:href="@{/productos}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+</html>
