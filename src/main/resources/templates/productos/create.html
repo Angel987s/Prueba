@@ -1,52 +1,44 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
-<div layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>Nuevo Producto</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div layout:fragment="content">
+    <div class="container mt-4">
+        <h2>Nuevo Producto</h2>
 
-    <h1>Crear nuevo producto</h1>
-    <form th:action="@{/productos/save}" th:object="${producto}" method="post">
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input type="text" class="form-control" th:field="*{nombre}" id="nombre" placeholder="Escriba el nombre del producto" required>
-                </div>
+        <form th:action="@{/productos/save}" th:object="${producto}" method="post">
+            <div class="form-group">
+                <label for="nombreA">Nombre:</label>
+                <input type="text" class="form-control" id="nombreA" th:field="*{nombreA}" required>
             </div>
 
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="precio">Precio</label>
-                    <input type="number" step="0.01" class="form-control" th:field="*{precio}" id="precio" placeholder="Escriba el precio del producto" required>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="descripcion">Descripción</label>
-                    <input type="text" class="form-control" th:field="*{descripcion}" id="descripcion" placeholder="Escriba la descripción del producto" required>
-                </div>
+            <div class="form-group">
+                <label for="precioA">Precio:</label>
+                <input type="number" class="form-control" id="precioA" th:field="*{precioA}" step="0.01" required>
             </div>
 
-            <div class="col-md-6">
-                <div class="form-group">
-                    <label for="marca">Marca</label>
-                    <select class="form-control" th:field="*{marca.id}" id="marca" required>
-                        <option th:each="marca : ${marcas}" th:value="${marca.id}" th:text="${marca.nombre}"></option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="existenciaA">Existencia:</label>
+                <select class="form-control" id="existenciaA" th:field="*{existenciaA}" required>
+                    <option value="1">Disponible</option>
+                    <option value="2">Agotado</option>
+                </select>
             </div>
-        </div>
 
-        <div th:if="${#fields.hasErrors('*')}" class="alert alert-danger" role="alert">
-            <ul>
-                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
-            </ul>
-        </div>
-        
-        <hr>
-        <button type="submit" class="btn btn-primary">Guardar</button> |
-        <a th:href="@{/productos}" class="btn btn-secondary">Regresar</a>
-    </form>
-</div>
+            <div class="form-group">
+                <label for="categoriaA">Categoría:</label>
+                <select class="form-control" id="categoriaA" th:field="*{categoriaA.id}" required>
+                    <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}"></option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a th:href="@{/productos}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
 </html>

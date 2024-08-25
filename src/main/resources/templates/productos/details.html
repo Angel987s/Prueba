@@ -1,36 +1,30 @@
 <!DOCTYPE html>
-<html lang="en"
-  xmlns:th="http://www.thymeleaf.org"
-  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-  layout:decorate="layouts/_layout">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles del Producto</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div layout:fragment="content">
+    <div class="container mt-4">
+        <h2>Detalles del Producto</h2>
+        <a th:href="@{/productos}" class="btn btn-secondary mb-3">Volver a la Lista</a>
 
-<div layout:fragment="content">
-  <h1>Detalles del Producto</h1>
-
-  <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
-  <div th:if="${msg}" class="alert alert-success" role="alert" th:text="${msg}"></div>
-
-  <div>
-    <hr />
-    <dl class="row">
-      <dt class="col-sm-2">ID</dt>
-      <dd class="col-sm-10" th:text="${producto.id}"></dd>
-
-      <dt class="col-sm-2">Nombre</dt>
-      <dd class="col-sm-10" th:text="${producto.nombre}"></dd>
-
-      <dt class="col-sm-2">Precio</dt>
-      <dd class="col-sm-10" th:text="'$'+${producto.precio}"></dd>
-
-      <dt class="col-sm-2">Descripción</dt>
-      <dd class="col-sm-10" th:text="${producto.descripcion}"></dd>
-
-      <dt class="col-sm-2">Marca</dt>
-      <dd class="col-sm-10" th:text="${producto.marca.nombre}"></dd>
-    </dl>
-
-    <a th:href="@{/productos/edit/{id}(id=${producto.id})}" class="btn btn-outline-info">Editar</a> |
-    <a th:href="@{/productos}" class="btn btn-secondary">Regresar</a>
-  </div>
-</div>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title" th:text="${producto.nombreA}">Nombre del Producto</h5>
+                <p class="card-text">
+                    <strong>Precio:</strong> <span th:text="'$'+${producto.precioA}"></span><br>
+                    <strong>Existencia:</strong> 
+                    <span th:if="${producto.existenciaA == 1}" class="text-success">Disponible</span>
+                    <span th:if="${producto.existenciaA == 2}" class="text-danger">Agotado</span><br>
+                    <strong>Categoría:</strong> <span th:text="${producto.categoriaA.nombre}"></span><br>
+                </p>
+                <a th:href="@{/productos/edit/{id}(id=${producto.id})}" class="btn btn-warning">Editar</a>
+                <a th:href="@{/productos}" class="btn btn-danger">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</body>
 </html>

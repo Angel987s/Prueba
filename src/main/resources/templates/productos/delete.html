@@ -1,39 +1,41 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="/layouts/_layout">
 
 <head>
-  <title>Eliminar Producto</title>
-  </head>
+    <title>Eliminar Producto</title>
+</head>
 
 <body>
 <div layout:fragment="content">
-  <h1>Eliminar Producto</h1>
-  <h3>¿Está seguro que desea eliminar este registro?</h3>
-  <div>
-    <hr />
-    <dl class="row">
-      <dt class="col-sm-2">ID</dt>
-      <dd class="col-sm-10" th:text="${producto.id}"></dd>
+    <h1>Eliminar Producto</h1>
+    <h3>¿Está seguro que desea eliminar este registro?</h3>
+    <div>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">ID</dt>
+            <dd class="col-sm-10" th:text="${producto.id}"></dd>
 
-      <dt class="col-sm-2">Nombre</dt>
-      <dd class="col-sm-10" th:text="${producto.nombre}"></dd>
+            <dt class="col-sm-2">Nombre</dt>
+            <dd class="col-sm-10" th:text="${producto.nombreA}"></dd>
 
-      <dt class="col-sm-2">Precio</dt>
-      <dd class="col-sm-10" th:text="'$'+${producto.precio}"></dd>
+            <dt class="col-sm-2">Precio</dt>
+            <dd class="col-sm-10" th:text="'$'+${producto.precioA}"></dd>
 
-      <dt class="col-sm-2">Descripción</dt>
-      <dd class="col-sm-10" th:text="${producto.descripcion}"></dd>
+            <dt class="col-sm-2">Disponibilidad</dt>
+            <dd class="col-sm-10">
+                <span th:text="${producto.existenciaA == 1 ? 'Disponible' : (producto.existenciaA == 2 ? 'Agotado' : 'Desconocido')}"></span>
+            </dd>
 
-      <dt class="col-sm-2">Marca</dt>
-      <dd class="col-sm-10" th:text="${producto.marca.nombre}"></dd>
-    </dl>
+            <dt class="col-sm-2">Categoría</dt>
+            <dd class="col-sm-10" th:text="${producto.categoriaA.nombre}"></dd>
+        </dl>
 
-    <form th:action="@{/productos/delete}" method="post">
-      <input type="hidden" name="id" th:value="${producto.id}">
-      <input type="submit" value="Eliminar" class="btn btn-danger"> |
-      <a th:href="@{/productos}" class="btn btn-secondary">Regresar</a>
-    </form>
-  </div>
+        <form th:action="@{/productos/delete/{id}(id=${producto.id})}" method="post">
+            <input type="hidden" name="id" th:value="${producto.id}">
+            <input type="submit" value="Eliminar" class="btn btn-danger">
+            <a th:href="@{/productos}" class="btn btn-secondary">Regresar</a>
+        </form>
+    </div>
 </div>
 </body>
 </html>

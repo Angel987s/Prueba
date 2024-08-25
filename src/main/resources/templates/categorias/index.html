@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado de Categorías</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Listado de Categorías</h1>
+        <a th:href="@{/categorias/create}" class="btn btn-outline-primary">Nueva Categoría</a>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="categoria : ${categorias}">
+                    <td th:text="${categoria.id}"></td>
+                    <td th:text="${categoria.nombre}"></td>
+                    <td>
+                        <a th:href="@{/categorias/details/{id}(id=${categoria.id})}" class="btn btn-outline-secondary">Detalles</a> |
+                        <a th:href="@{/categorias/edit/{id}(id=${categoria.id})}" class="btn btn-outline-info">Editar</a> |
+                        <a th:href="@{/categorias/remove/{id}(id=${categoria.id})}" class="btn btn-outline-danger">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Categoría</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Crear Nueva Categoría</h1>
+        <form th:action="@{/categorias/save}" th:object="${categoria}" method="post">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input type="text" id="nombre" name="nombre" class="form-control" th:value="${categoria.nombre}" placeholder="Nombre de la categoría" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a th:href="@{/categorias}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</body>
+</html>

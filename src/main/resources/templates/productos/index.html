@@ -1,66 +1,53 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
-<div layout:fragment="content">
+<head>
+    <meta charset="UTF-8">
+    <title>Lista de Productos</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div layout:fragment="content">
+    <div class="container mt-4">
+        <h2>Lista de Productos</h2>
+        <a th:href="@{/productos/create}" class="btn btn-primary mb-3">Nuevo Producto</a>
 
-    <head>
-        <title>Listado de Productos</title>
-    </head>
-  <div th:if="${msg != null}">
-    <script>
-      Swal.fire({
-        title: "Confirmación",
-        text: '[[${msg}]]',
-        icon: "success"
-      });
-    </script>
-  </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Precio</th>
+                    <th>Existencia</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="producto : ${productos.content}">
+                    <td th:text="${producto.id}"></td>
+                    <td th:text="${producto.nombreA}"></td>
+                    <td th:text="'$'+${producto.precioA}"></td>
+                    <td>
+                      <span th:if="${producto.existenciaA == 1}" class="text-success">Disponible</span>
+                      <span th:if="${producto.existenciaA == 2}" class="text-danger">Agotado</span>
+                  </td>
+                  <td th:text="${producto.categoriaA.nombre}">
+                    <td>
+                        <a th:href="@{/productos/details/{id}(id=${producto.id})}" class="btn btn-info btn-sm">Detalles</a>
+                        <a th:href="@{/productos/edit/{id}(id=${producto.id})}" class="btn btn-warning btn-sm">Editar</a>
+                        <a th:href="@{/productos/remove/{id}(id=${producto.id})}" class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
-  <div th:if="${error != null}">
-    <script>
-      Swal.fire({
-        title: "Error",
-        text: '[[${error}]]',
-        icon: "error"
-      });
-    </script>
-  </div>
-
-  <h1>Listado de Productos</h1>
-  <a th:href="@{/productos/create}" class="btn btn-outline-primary">Nuevo Producto</a>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Precio</th>
-        <th>Descripción</th>
-        <th>Marca</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr th:each="producto : ${productos.content}">
-        <td th:text="${producto.id}"></td>
-        <td th:text="${producto.nombre}"></td>
-        <td th:text="'$'+ ${producto.precio}"></td>
-        <td th:text="${producto.descripcion}"></td>
-        <td th:text="${producto.marca.nombre}"></td>
-        <td>
-          <a th:href="@{/productos/details/{id} (id=${producto.id})}" class="btn btn-outline-secondary">Detalles</a> |
-          <a th:href="@{/productos/edit/{id} (id=${producto.id})}" class="btn btn-outline-info">Editar</a> |
-          <a th:href="@{/productos/remove/{id} (id=${producto.id})}" class="btn btn-outline-danger">Eliminar</a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <nav aria-label="Page navigation example">
-    <ul class="pagination">
-      <li class="page-item" th:each="pageNumber : ${pageNumbers}">
-        <a class="page-link" th:href="@{|/productos?page=${pageNumber - 1}|}" th:text="${pageNumber}"></a>
-      </li>
-    </ul>
-  </nav>
-
-</div>
+        <div th:if="${pageNumbers != null and pageNumbers.size() > 1}">
+            <ul class="pagination">
+                <li th:each="pageNumber : ${pageNumbers}" th:classappend="${pageNumber == productos.number + 1} ? 'active'">
+                    <a class="page-link" th:href="@{|/productos?page=${pageNumber}|}" th:text="${pageNumber}"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</body>
 </html>

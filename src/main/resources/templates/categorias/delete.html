@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eliminar Categoría</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div layout:fragment="content">
+        <h1>Eliminar Categoría</h1>
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">¿Estás seguro de que quieres eliminar esta categoría?</h5>
+                <p>ID: <span th:text="${categoriaA.id}"></span></p>
+                <p>Nombre: <span th:text="${categoriaA.nombre}"></span></p>
+
+                <form th:action="@{/categorias/delete}" method="post">
+                    <input type="hidden" name="id" th:value="${categoriaA.id}" />
+                    <button type="submit" class="btn btn-danger">Eliminar</button>
+                    <a th:href="@{/categorias}" class="btn btn-secondary">Cancelar</a>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
