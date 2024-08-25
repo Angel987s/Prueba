@@ -10,7 +10,7 @@
         <div class="container mt-4">
             <h2>Editar Producto</h2>
 
-            <form th:action="@{/productos/update}" th:object="${producto}" method="post">
+            <form th:action="@{/productos/save}" th:object="${producto}" method="post">
                 <input type="hidden" th:field="*{id}">
 
                 <div class="form-group">
@@ -38,6 +38,12 @@
                     </select>
                 </div>
 
+
+
+                <div class="row" th:with="action=${'edit'}">            
+                    <th:block th:insert="~{/productos/_etiquetas.html}"></th:block>
+                </div>   
+                <hr>   
                 <button type="submit" class="btn btn-primary">Actualizar</button>
                 <a th:href="@{/productos}" class="btn btn-secondary">Cancelar</a>
             </form>

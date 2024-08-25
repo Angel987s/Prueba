@@ -28,13 +28,8 @@ public class ProductoAService implements IProductoAService {
     }
 
     @Override
-    public ProductoA buscarPorId(Integer id) {
-        Optional<ProductoA> productoAOptional = productoARepository.findById(id);
-        if (productoAOptional.isPresent()) {
-            return productoAOptional.get();
-        } else {
-            throw new RuntimeException("Producto no encontrado con ID: " + id); // O lanzar una excepción personalizada
-        }
+    public Optional<ProductoA> buscarPorId(Integer id) {
+        return productoARepository.findById(id);
     }
 
     @Override

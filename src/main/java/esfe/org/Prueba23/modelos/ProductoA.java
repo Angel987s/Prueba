@@ -1,9 +1,11 @@
 package esfe.org.Prueba23.modelos;
 
+import java.util.List;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
 @Entity
+@Table(name = "productos_a")
 public class ProductoA {
 
     @Id
@@ -23,6 +25,9 @@ public class ProductoA {
     @ManyToOne
     @JoinColumn(name = "categoria_id")
     private CategoriaA categoriaA;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<EtiquetaA> etiquetas;
 
     // Getters y Setters
 
@@ -64,5 +69,13 @@ public class ProductoA {
 
     public void setCategoriaA(CategoriaA categoriaA) {
         this.categoriaA = categoriaA;
+    }
+
+    public List<EtiquetaA> getEtiquetas() {
+        return etiquetas;
+    }
+
+    public void setEtiquetas(List<EtiquetaA> etiquetas) {
+        this.etiquetas = etiquetas;
     }
 }

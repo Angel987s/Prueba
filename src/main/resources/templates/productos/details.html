@@ -21,6 +21,10 @@
                     <span th:if="${producto.existenciaA == 2}" class="text-danger">Agotado</span><br>
                     <strong>Categoría:</strong> <span th:text="${producto.categoriaA.nombre}"></span><br>
                 </p>
+
+                <div class="row" th:with="action=${'details'}">
+                    <th:block th:insert="~{/productos/_etiquetas.html}"></th:block>
+                </div>
                 <a th:href="@{/productos/edit/{id}(id=${producto.id})}" class="btn btn-warning">Editar</a>
                 <a th:href="@{/productos}" class="btn btn-danger">Cancelar</a>
             </div>

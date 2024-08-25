@@ -30,6 +30,10 @@
             <dd class="col-sm-10" th:text="${producto.categoriaA.nombre}"></dd>
         </dl>
 
+        <div class="row" th:with="action=${'delete'}">            
+            <th:block th:insert="~{/productos/_etiquetas.html}"></th:block>
+        </div>
+        <hr>
         <form th:action="@{/productos/delete/{id}(id=${producto.id})}" method="post">
             <input type="hidden" name="id" th:value="${producto.id}">
             <input type="submit" value="Eliminar" class="btn btn-danger">
