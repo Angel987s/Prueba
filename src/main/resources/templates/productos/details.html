@@ -7,7 +7,7 @@
 </head>
 <body>
   <div layout:fragment="content">
-    <div class="container mt-4">
+    <div class="container mt-4" >
         <h2>Detalles del Producto</h2>
         <a th:href="@{/productos}" class="btn btn-secondary mb-3">Volver a la Lista</a>
 
@@ -20,11 +20,14 @@
                     <span th:if="${producto.existenciaA == 1}" class="text-success">Disponible</span>
                     <span th:if="${producto.existenciaA == 2}" class="text-danger">Agotado</span><br>
                     <strong>Categoría:</strong> <span th:text="${producto.categoriaA.nombre}"></span><br>
-                </p>
+                    <th:block th:insert="~{/productos/_image.html}"></th:block>
+                                </p>
 
                 <div class="row" th:with="action=${'details'}">
                     <th:block th:insert="~{/productos/_etiquetas.html}"></th:block>
+                    
                 </div>
+                
                 <a th:href="@{/productos/edit/{id}(id=${producto.id})}" class="btn btn-warning">Editar</a>
                 <a th:href="@{/productos}" class="btn btn-danger">Cancelar</a>
             </div>

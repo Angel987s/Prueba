@@ -29,7 +29,21 @@ public class ProductoA {
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EtiquetaA> etiquetas;
 
+    private String UrlImage;
+    public String getUrlImage() {
+        return UrlImage;
+    }
+    public void setUrlImage(String urlImage) {
+        this.UrlImage = urlImage;
+    }
+
+
+
     // Getters y Setters
+
+    
+
+   
 
     public Integer getId() {
         return id;

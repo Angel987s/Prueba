@@ -1,0 +1,32 @@
+<!-- Formulario para subir y mostrar imagen -->
+<div class="row" th:if="${action == 'create' || action == 'edit'}">            
+  <div class="col-md-6">
+      <div class="form-group">
+          <label>Subir imagen</label>
+          <input type="file" name="file" id="file" accept="image/*"> 
+          <button type="button" class="btn btn-danger" onclick="clearFile()">Clear</button>                             
+      </div>
+  </div>      
+</div>
+
+<div class="row" th:if="${action != 'create' && producto.urlImage != null && producto.urlImage.trim().length() > 0 }">
+  <img  style="width: 200px;" th:src="@{/productos/images/{id}(id=${producto.id})}" alt="Imagen del Producto">
+
+
+  <input type="hidden" id="urlImage" name="urlImage" th:value="${producto.urlImage}">  
+  
+  <div class="col-md-3">
+      <button th:if="${action == 'edit'}" type="button" class="btn btn-danger" onclick="deleteImage()">Eliminar Imagen</button>  
+  </div>       
+</div>
+
+<script>
+  function clearFile() {
+      document.getElementById('file').value = '';
+  }
+
+  function deleteImage() {
+      document.getElementById('urlImage').value = "delete";
+      document.getElementById('imageProducto').style.display = "none";
+  }
+</script>

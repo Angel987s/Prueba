@@ -1,48 +1,61 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="layouts/_layout">
 <head>
-    <meta charset="UTF-8">
-    <title>Nuevo Producto</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <meta charset="UTF-8">
+  <title>Nuevo Producto</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <div layout:fragment="content">
+  <div layout:fragment="content">
     <div class="container mt-4">
-        <h2>Nuevo Producto</h2>
 
-        <form th:action="@{/productos/save}" th:object="${producto}" method="post">
-            <div class="form-group">
-                <label for="nombreA">Nombre:</label>
-                <input type="text" class="form-control" id="nombreA" th:field="*{nombreA}" required>
-            </div>
+      <h2>Nuevo Producto</h2>
 
-            <div class="form-group">
-                <label for="precioA">Precio:</label>
-                <input type="number" class="form-control" id="precioA" th:field="*{precioA}" step="0.01" required>
-            </div>
+      <form th:action="@{/productos/save}" th:object="${producto}" method="post" enctype="multipart/form-data" class="row justify-content-center">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="nombreA">Nombre:</label>
+            <input type="text" class="form-control" id="nombreA" th:field="*{nombreA}" required>
+          </div>
 
-            <div class="form-group">
-                <label for="existenciaA">Existencia:</label>
-                <select class="form-control" id="existenciaA" th:field="*{existenciaA}" required>
-                    <option value="1">Disponible</option>
-                    <option value="2">Agotado</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="precioA">Precio:</label>
+            <input type="number" class="form-control" id="precioA" th:field="*{precioA}" step="0.01" required>
+          </div>
 
-            <div class="form-group">
-                <label for="categoriaA">Categoría:</label>
-                <select class="form-control" id="categoriaA" th:field="*{categoriaA.id}" required>
-                    <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}"></option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="existenciaA">Existencia:</label>
+            <select class="form-control" id="existenciaA" th:field="*{existenciaA}" required>
+              <option value="1">Disponible</option>
+              <option value="2">Agotado</option>
+            </select>
+          </div>
 
-            <div class="row" th:with="action=${'create'}">
-                <th:block th:insert="~{/productos/_etiquetas.html}"></th:block>
-            </div>
-            <hr>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a th:href="@{/productos}" class="btn btn-secondary">Cancelar</a>
-        </form>
+          <div class="form-group">
+            <label for="categoriaA">Categoría:</label>
+            <select class="form-control" id="categoriaA" th:field="*{categoriaA.id}" required>
+              <option th:each="categoria : ${categorias}" th:value="${categoria.id}" th:text="${categoria.nombre}"></option>
+            </select>
+          </div>
+        </div>
+
+        <div class="col-md-6">
+          <th:block th:with="action=${'create'}" th:insert="~{/productos/_image.html}"></th:block>
+
+          <hr>
+
+          <div class="row">
+            <th:block th:with="action=${'create'}">
+              <th:block th:insert="~{/productos/_etiquetas.html}"></th:block>
+            </th:block>
+          </div>
+        </div>
+
+        <div class="col-12 mt-4 text-center"> <button type="submit" class="btn btn-primary">Guardar</button>
+          <a th:href="@{/productos}" class="btn btn-secondary">Cancelar</a>
+        </div>
+      </form>
     </div>
+  </div>
 </body>
 </html>

@@ -4,20 +4,35 @@ import esfe.org.Prueba23.modelos.EtiquetaA;
 import esfe.org.Prueba23.modelos.ProductoA;
 import esfe.org.Prueba23.servicios.interfaces.IProductoAService;
 import esfe.org.Prueba23.servicios.interfaces.ICategoriaAService;
+import esfe.org.Prueba23.servicios.implementaciones.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import java.util.NoSuchElementException;
+import java.nio.file.Paths;
+import java.nio.file.Files;
+
+
+import org.springframework.core.io.Resource;
+
+import java.io.IOException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,6 +45,10 @@ public class ProductoAController {
 
     @Autowired
     private ICategoriaAService categoriaService;
+
+    @Autowired
+    private ImageStorageService imageStorageService;
+
 
     @GetMapping
 public String index(Model model, @RequestParam("page") Optional<Integer> page,
@@ -91,80 +110,96 @@ public String index(Model model, @RequestParam("page") Optional<Integer> page,
 
 
     @PostMapping("/deltelefonos/{id}")
-    public String delPhone(@PathVariable("id") Long id, ProductoA alumno, Model model) {
-        alumno.getEtiquetas().removeIf(elemento -> elemento.getId() == id);
-        model.addAttribute(alumno);
-        if (alumno.getId() != null && alumno.getId() > 0)
+    public String delPhone(@PathVariable("id") Long id, ProductoA producto, Model model) {
+        producto.getEtiquetas().removeIf(elemento -> elemento.getId() == id);
+        model.addAttribute("producto", producto);
+        if (producto.getId() != null && producto.getId() > 0)
             return "productos/edit";
         else
             return "productos/create";
     }
     
 
-    @PostMapping("/save")
-public String save(ProductoA producto, BindingResult result, Model model, RedirectAttributes attributes) {
-    if (result.hasErrors()) {
-        model.addAttribute("producto", producto);
-        attributes.addFlashAttribute("error", "No se pudo guardar debido a un error.");
-        return "productos/create";
-    }
+@PostMapping("/save")
+public String save(ProductoA producto, BindingResult result, Model model, @RequestParam("file") MultipartFile file, RedirectAttributes attributes) {
+  if (result.hasErrors()) {
+         model.addAttribute("producto", producto);
+         attributes.addFlashAttribute("error", "No se pudo guardar debido a un error.");
+         return "productos/create";
+     }
 
-    if (producto.getEtiquetas() != null) {
-        for (EtiquetaA item : producto.getEtiquetas()) {
-            if (item.getId() != null && item.getId() < 1)
-                item.setId(null);
-            item.setProducto(producto);
-        }
-    }
+     try {
+         if (file != null && !file.isEmpty()) {
+             UUID uuid = UUID.randomUUID();
+             String newFileName = imageStorageService.storeImage(file, uuid.toString());
+             producto.setUrlImage(newFileName);
+         }
 
-    if (producto.getId() != null && producto.getId() > 0) {
-        // Funcionalidad para cuando es modificar un registro
-        ProductoA productoUpdate = productoService.buscarPorId(producto.getId()).get();
-        // Almacenar en un diccionario las etiquetas que están
-        // guardadas en la base de datos para mejor acceso a ellas
-        Map<Long, EtiquetaA> etiquetasData = new HashMap<>();
-        if (productoUpdate.getEtiquetas() != null) {
-            for (EtiquetaA item : productoUpdate.getEtiquetas()) {
-                etiquetasData.put(item.getId(), item);
-            }
-        }
-        // Actualizar los registros que vienen de la vista hacia el que se encuentra por id
-        productoUpdate.setNombreA(producto.getNombreA());
-        productoUpdate.setPrecioA(producto.getPrecioA());
-        productoUpdate.setCategoriaA(producto.getCategoriaA());
+         if (producto.getEtiquetas() != null) {
+             for (EtiquetaA item : producto.getEtiquetas()) {
+                 if (item.getId() != null && item.getId() < 1) {
+                     item.setId(null);
+                 }
+                 item.setProducto(producto);
+             }
+         }
 
-        // Recorrer las etiquetas obtenidas desde la vista y actualizar
-        // productoUpdate para que implemente los cambios
-        if (producto.getEtiquetas() != null) {
-            for (EtiquetaA item : producto.getEtiquetas()) {
-                if (item.getId() == null) {
-                    if (productoUpdate.getEtiquetas() == null)
-                        productoUpdate.setEtiquetas(new ArrayList<>());
-                    item.setProducto(productoUpdate);
-                    productoUpdate.getEtiquetas().add(item);
-                } else {
-                    if (etiquetasData.containsKey(item.getId())) {
-                        EtiquetaA etiquetaAUpdate = etiquetasData.get(item.getId());
-                        // Actualizar las propiedades de EtiquetaA
-                        etiquetaAUpdate.setNombre(item.getNombre());
-                        // Remover del diccionario las etiquetas que no vienen desde la vista
-                        etiquetasData.remove(item.getId());
-                    }
-                }
-            }
-        }
-        // Eliminar las etiquetas que ya no están en la vista
-        if (!etiquetasData.isEmpty()) {
-            for (Map.Entry<Long, EtiquetaA> entry : etiquetasData.entrySet()) {
-                productoUpdate.getEtiquetas().removeIf(elemento -> elemento.getId().equals(entry.getKey()));
-            }
-        }
-        producto = productoUpdate;
-    }
-    productoService.crearOEditar(producto);
-    attributes.addFlashAttribute("msg", "Producto creado o actualizado correctamente");
-    return "redirect:/productos";
-}
+         if (producto.getId() != null && producto.getId() > 0) {
+             ProductoA productoUpdate = productoService.buscarPorId(producto.getId()).get();
+             Map<Long, EtiquetaA> etiquetasData = new HashMap<>();
+
+             if (productoUpdate.getEtiquetas() != null) {
+                 for (EtiquetaA item : productoUpdate.getEtiquetas()) {
+                     etiquetasData.put(item.getId(), item);
+                 }
+             }
+
+             productoUpdate.setNombreA(producto.getNombreA());
+             productoUpdate.setPrecioA(producto.getPrecioA());
+             productoUpdate.setCategoriaA(producto.getCategoriaA());
+             productoUpdate.setExistenciaA(producto.getExistenciaA());
+             productoUpdate.setUrlImage(producto.getUrlImage());
+
+             if (producto.getEtiquetas() != null) {
+                 for (EtiquetaA item : producto.getEtiquetas()) {
+                     if (item.getId() == null) {
+                         if (productoUpdate.getEtiquetas() == null) {
+                             productoUpdate.setEtiquetas(new ArrayList<>());
+                         }
+                         item.setProducto(productoUpdate);
+                         productoUpdate.getEtiquetas().add(item);
+                     } else {
+                         if (etiquetasData.containsKey(item.getId())) {
+                             EtiquetaA etiquetaAUpdate = etiquetasData.get(item.getId());
+                             etiquetaAUpdate.setNombre(item.getNombre());
+                             etiquetasData.remove(item.getId());
+                         }
+                     }
+                 }
+             }
+
+             if (!etiquetasData.isEmpty()) {
+                 for (Map.Entry<Long, EtiquetaA> entry : etiquetasData.entrySet()) {
+                     productoUpdate.getEtiquetas().removeIf(elemento -> elemento.getId().equals(entry.getKey()));
+                 }
+             }
+
+             producto = productoUpdate;
+         }
+
+         productoService.crearOEditar(producto);
+         attributes.addFlashAttribute("msg", "Producto creado o actualizado correctamente");
+
+     } catch (IOException e) {
+         attributes.addFlashAttribute("error", "Error al guardar la imagen.");
+         return "productos/create";
+     }
+
+     return "redirect:/productos";
+ }
+
+   
+
 
 
     @GetMapping("/edit/{id}")
@@ -175,12 +210,37 @@ public String save(ProductoA producto, BindingResult result, Model model, Redire
         return "productos/edit";
     }
 
-    @PostMapping("/update")
-    public String update(@ModelAttribute("producto") ProductoA producto, RedirectAttributes redirectAttributes) {
-        productoService.crearOEditar(producto);
-        redirectAttributes.addFlashAttribute("msg", "Producto actualizado exitosamente!");
-        return "redirect:/productos";
+@PostMapping("/update")
+public String update(@ModelAttribute("producto") ProductoA producto, BindingResult result, Model model, MultipartFile file, RedirectAttributes attributes) throws IOException {
+    if (result.hasErrors()) {
+        model.addAttribute("producto", producto);
+        attributes.addFlashAttribute("error", "No se pudo actualizar debido a un error.");
+        return "productos/edit";
     }
+
+    ProductoA productoActual = productoService.buscarPorId(producto.getId()).get();
+
+    // Verificar si hay una nueva imagen y eliminar la anterior
+    if (file != null && !file.isEmpty()) {
+        // Eliminar la imagen anterior si existe
+        if (productoActual.getUrlImage() != null && !productoActual.getUrlImage().isEmpty()) {
+            imageStorageService.deleteImage(productoActual.getUrlImage());
+        }
+
+        // Guardar la nueva imagen
+        UUID uuid = UUID.randomUUID();
+        producto.setUrlImage(imageStorageService.storeImage(file, uuid.toString()));
+    } else {
+        // Mantener la URL de la imagen anterior si no se ha cargado una nueva
+        producto.setUrlImage(productoActual.getUrlImage());
+    }
+
+    productoService.crearOEditar(producto);
+    attributes.addFlashAttribute("msg", "Producto actualizado exitosamente!");
+    return "redirect:/productos";
+}
+
+
 
     @GetMapping("/remove/{id}")
     public String remove(@PathVariable Integer id, Model model) {
@@ -190,10 +250,16 @@ public String save(ProductoA producto, BindingResult result, Model model, Redire
     }
 
     @PostMapping("/delete/{id}")
-    public String delete(@PathVariable Integer id, RedirectAttributes redirectAttributes) {
-        productoService.eliminarPorId(id);
-        redirectAttributes.addFlashAttribute("msg", "Producto eliminado exitosamente!");
-        return "redirect:/productos";
+    public String delete(ProductoA producto, RedirectAttributes attributes) throws IOException {
+    if (producto.getUrlImage() != null && producto.getUrlImage().trim().length() > 0) {
+        imageStorageService.deleteImage(producto.getUrlImage());
+    }
+
+    productoService.eliminarPorId(producto.getId());
+
+    attributes.addFlashAttribute("msg", "Producto eliminado correctamente");
+    
+    return "redirect:/productos";
     }
 
     @GetMapping("/details/{id}")
@@ -202,5 +268,42 @@ public String save(ProductoA producto, BindingResult result, Model model, Redire
         model.addAttribute("producto", producto);
         return "productos/details";
     }
+
+
+/* 
+    @GetMapping("/images/{id}")
+    public ResponseEntity<Resource> viewImage(@PathVariable Integer id) {
+        try {
+            ProductoA producto = productoService.buscarPorId(id).orElseThrow(() -> new NoSuchElementException("Producto no encontrado"));
+            Resource resource = imageStorageService.loadImageAsResource(producto.getUrlImage());
+    
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG) // o MediaType.IMAGE_PNG según el tipo de imagen
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            // Manejo de error si la imagen no se puede cargar
+            return ResponseEntity.notFound().build();
+        }
+    }
+*/
+
+    @GetMapping("/images/{id}")
+    public ResponseEntity<Resource> viewImage(@PathVariable Integer id) {
+        try {
+            ProductoA productoA = productoService.buscarPorId(id).get();
+            Resource resource = imageStorageService.loadImageAsResource(productoA.getUrlImage());
+
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_JPEG) // o MediaType.IMAGE_PNG según el tipo de imagen
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .body(resource);
+        } catch (Exception e) {
+            // Manejo de error si la imagen no se puede cargar
+            return ResponseEntity.notFound().build();
+        }
+    }
+    
+
     
 }
